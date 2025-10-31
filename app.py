@@ -17,7 +17,7 @@ UPLOAD_FOLDER = "static/uploads"
 ALLOWED_EXTENSIONS = {'png','jpg','jpeg','gif'}
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY','dealxsecretkey')
+app.secret_key = os.environ.get('SECRET_KEY', 'dealxsecretkey')
 app.config['APP_NAME'] = APP_NAME
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -60,7 +60,7 @@ if CLOUDINARY_AVAILABLE:
                 pass
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def upload_to_cloudinary(file_storage):
     if not CLOUDINARY_AVAILABLE:
@@ -70,7 +70,10 @@ def upload_to_cloudinary(file_storage):
         tmp.flush()
         tmp_path = tmp.name
     try:
-        res = cloudinary.uploader.upload(tmp_path, folder='dealx_uploads', use_filename=True, unique_filename=False, resource_type='image')
+        res = cloudinary.uploader.upload(
+            tmp_path, folder='dealx_uploads',
+            use_filename=True, unique_filename=False, resource_type='image'
+        )
         return res.get('secure_url')
     finally:
         try:
@@ -78,10 +81,14 @@ def upload_to_cloudinary(file_storage):
         except Exception:
             pass
 
-@app.before_first_request
+# --- FIXED SECTION ---
 def startup():
-    # initialize DB before handling requests
+    # Initialize DB before handling requests
     init_db()
+
+with app.app_context():
+    startup()
+# --- END FIX ---
 
 @app.route('/')
 def home():
@@ -101,13 +108,13 @@ def items():
 def about():
     return render_template('about.html', config=app.config)
 
-@app.route('/add', methods=['GET','POST'])
+@app.route('/add', methods=['GET', 'POST'])
 def add_item():
     if request.method == 'POST':
-        name = request.form.get('name','').strip()
-        price = request.form.get('price','').strip()
-        desc = request.form.get('desc','').strip()
-        contact = request.form.get('contact','').strip()
+        name = request.form.get('name', '').strip()
+        price = request.form.get('price', '').strip()
+        desc = request.form.get('desc', '').strip()
+        contact = request.form.get('contact', '').strip()
         stars = request.form.get('stars') or 0
         try:
             stars = float(stars)
@@ -123,7 +130,6 @@ def add_item():
                 try:
                     image_path = upload_to_cloudinary(image_file)
                 except Exception:
-                    # fallback to local save
                     local_path = os.path.join(UPLOAD_FOLDER, filename)
                     image_file.save(local_path)
                     image_path = os.path.join('uploads', filename)
@@ -132,7 +138,10 @@ def add_item():
                 image_file.save(local_path)
                 image_path = os.path.join('uploads', filename)
         conn = get_db_connection()
-        conn.execute("INSERT INTO items (name, price, description, contact, image, stars) VALUES (?, ?, ?, ?, ?, ?)", (name, price, desc, contact, image_path, stars))
+        conn.execute(
+            "INSERT INTO items (name, price, description, contact, image, stars) VALUES (?, ?, ?, ?, ?, ?)",
+            (name, price, desc, contact, image_path, stars)
+        )
         conn.commit()
         conn.close()
         flash('Listing added successfully!', 'success')
