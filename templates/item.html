@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="container small">
+  <a href="/items" class="back-link">← Back to all items</a>
+  <div class="detail-card">
+    <div class="detail-media">
+      {% if item['image'] and item['image'].startswith('http') %}
+        <img src="{{ item['image'] }}" class="detail-img">
+      {% elif item['image'] %}
+        <img src="/static/{{ item['image'] }}" class="detail-img">
+      {% else %}
+        <img src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=1400&q=80" class="detail-img">
+      {% endif %}
+    </div>
+    <div class="detail-info">
+      <h1>{{ item['name'] }}</h1>
+      <p class="price large">₹{{ item['price'] }}</p>
+      <p><strong>Description</strong></p>
+      <p class="muted">{{ item['description'] }}</p>
+      <p><strong>Contact</strong> <a href="tel:{{ item['contact'] }}">{{ item['contact'] }}</a></p>
+      <div class="stars-large">{% for i in range(5) %}{% if item['stars'] and i < item['stars']|round(0,'floor') %}<span class="star">★</span>{% else %}<span class="star muted">☆</span>{% endif %}{% endfor %}</div>
+    </div>
+  </div>
+</main>
+{% endblock %}

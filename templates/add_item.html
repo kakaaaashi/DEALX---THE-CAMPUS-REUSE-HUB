@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="container small">
+  <h1>Sell an item</h1>
+  <p class="muted">List your used items — clear photos sell faster.</p>
+  <form method="POST" enctype="multipart/form-data" class="form-card">
+    <label>Item name</label>
+    <input type="text" name="name" required placeholder="e.g., Drafting Set">
+    <label>Price (₹)</label>
+    <input type="text" name="price" required placeholder="e.g., 300">
+    <label>Description</label>
+    <textarea name="desc" rows="5" required placeholder="Condition, brand, year..."></textarea>
+    <label>Contact (phone or email)</label>
+    <input type="text" name="contact" required placeholder="9876543210 or email">
+    <label>Star rating (optional)</label>
+    <select name="stars">
+      <option value="">No rating</option>
+      <option value="5">5 - Excellent</option>
+      <option value="4">4 - Very good</option>
+      <option value="3">3 - Good</option>
+      <option value="2">2 - Fair</option>
+      <option value="1">1 - Poor</option>
+    </select>
+    <label>Photo (optional)</label>
+    <input type="file" name="image" accept="image/*">
+    <div style="margin-top:12px;">
+      <button class="btn primary" type="submit">Post Listing</button>
+      <a href="/items" class="btn">Cancel</a>
+    </div>
+  </form>
+  <p class="muted small">Note: To make image storage permanent across deploys, set up Cloudinary and add credentials as environment variables on Render.</p>
+</main>
+{% endblock %}

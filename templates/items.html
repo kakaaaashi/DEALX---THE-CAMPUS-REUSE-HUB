@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="container">
+  <section class="controls">
+    <input id="searchInput" type="search" placeholder="Search items..." />
+    <select id="filterPrice">
+      <option value="">Any price</option>
+      <option value="under200">Under ₹200</option>
+      <option value="200to500">₹200 - ₹500</option>
+      <option value="over500">Over ₹500</option>
+    </select>
+  </section>
+
+  <section class="grid" id="itemsGrid">
+    {% if not items %}
+      <div class="empty">No items yet. Be the first to list.</div>
+    {% endif %}
+    {% for item in items %}
+    <article class="card" data-name="{{ item['name']|lower }}" data-desc="{{ item['description']|lower }}" data-price="{{ item['price'] }}">
+      <a href="/item/{{ item['id'] }}" class="card-media">
+        {% if item['image'] and item['image'].startswith('http') %}
+          <img src="{{ item['image'] }}" alt="{{ item['name'] }}">
+        {% elif item['image'] %}
+          <img src="/static/{{ item['image'] }}" alt="{{ item['name'] }}">
+        {% else %}
+          <img src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=1200&q=80" alt="placeholder">
+        {% endif %}
+        <div class="price-tag">₹{{ item['price'] }}</div>
+      </a>
+      <div class="card-body">
+        <h3 class="card-title"><a href="/item/{{ item['id'] }}">{{ item['name'] }}</a></h3>
+        <p class="card-desc">{{ item['description'][:140] }}{% if item['description']|length>140 %}...{% endif %}</p>
+        <div class="card-row">
+          <div class="stars">{% for i in range(5) %}{% if item['stars'] and i < item['stars']|round(0,'floor') %}<span class="star">★</span>{% else %}<span class="star muted">☆</span>{% endif %}{% endfor %}</div>
+          <a href="/item/{{ item['id'] }}" class="btn small">View</a>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+</main>
+
+<script>
+const searchInput = document.getElementById('searchInput');
+const filterPrice = document.getElementById('filterPrice');
+const grid = document.getElementById('itemsGrid');
+function applyFilters(){
+  const q = searchInput.value.trim().toLowerCase();
+  const p = filterPrice.value;
+  const cards = Array.from(grid.querySelectorAll('.card'));
+  cards.forEach(c=>{
+    const name=c.dataset.name||'', desc=c.dataset.desc||'', price=parseFloat(c.dataset.price)||0;
+    const matchSearch = !q || name.includes(q) || desc.includes(q);
+    let matchPrice=true;
+    if(p==='under200') matchPrice = price<200;
+    if(p==='200to500') matchPrice = price>=200 && price<=500;
+    if(p==='over500') matchPrice = price>500;
+    c.style.display = (matchSearch && matchPrice) ? '' : 'none';
+  });
+}
+searchInput.addEventListener('input', applyFilters);
+filterPrice.addEventListener('change', applyFilters);
+</script>
+{% endblock %}

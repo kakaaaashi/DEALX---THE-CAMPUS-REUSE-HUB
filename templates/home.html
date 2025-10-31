@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero hero-large">
+  <div class="hero-image" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1600&q=80');"></div>
+  <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <h1>DealX — Campus Reuse Hub</h1>
+    <p class="lead">Buy and sell used college essentials at affordable prices.</p>
+    <div class="hero-ctas">
+      <a href="/items" class="btn primary large">Browse Items</a>
+      <a href="/add" class="btn ghost large">Sell an Item</a>
+    </div>
+  </div>
+</section>
+
+<main class="container">
+  <section class="section-intro">
+    <h2>Featured listings</h2>
+    <p class="muted">Handpicked items by students across campus.</p>
+  </section>
+
+  <section class="grid">
+    {% if not items %}
+      <div class="empty">No items yet. Add your first listing!</div>
+    {% endif %}
+    {% for item in items %}
+    <article class="card">
+      <a href="/item/{{ item['id'] }}" class="card-media">
+        {% if item['image'] and item['image'].startswith('http') %}
+          <img src="{{ item['image'] }}" alt="{{ item['name'] }}">
+        {% elif item['image'] %}
+          <img src="/static/{{ item['image'] }}" alt="{{ item['name'] }}">
+        {% else %}
+          <img src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=1200&q=80" alt="placeholder">
+        {% endif %}
+        <div class="price-tag">₹{{ item['price'] }}</div>
+      </a>
+      <div class="card-body">
+        <h3 class="card-title"><a href="/item/{{ item['id'] }}">{{ item['name'] }}</a></h3>
+        <p class="card-desc">{{ item['description'][:120] }}{% if item['description']|length>120 %}...{% endif %}</p>
+        <div class="card-row">
+          <div class="stars">{% for i in range(5) %}{% if item['stars'] and i < item['stars']|round(0,'floor') %}<span class="star">★</span>{% else %}<span class="star muted">☆</span>{% endif %}{% endfor %}</div>
+          <a href="/item/{{ item['id'] }}" class="btn small">View</a>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+
+  <section class="about-preview">
+    <div class="about-left">
+      <h2>Our Vision</h2>
+      <p>DealX envisions a campus where every student can access the tools they need without breaking the bank.</p>
+      <a href="/about" class="btn ghost">Learn more</a>
+    </div>
+    <div class="about-right">
+      <div class="about-card">
+        <h3>Why DealX?</h3>
+        <ul>
+          <li>Saves money for students</li>
+          <li>Reduces waste by promoting reuse</li>
+          <li>Easy local pickup and contact</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

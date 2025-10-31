@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ title if title else config.get('APP_NAME','DealX') }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="dark">
+  <header class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        <a href="/"><div class="logo">DealX</div><div class="subtitle">Campus Reuse Hub</div></a>
+      </div>
+      <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/items">Items</a>
+        <a href="/about">About Us</a>
+        <a href="/add" class="btn small primary">+ Sell</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-wrap container">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <h3>DealX</h3>
+        <p class="muted">Buy and sell used college essentials at affordable prices.</p>
+        <p class="muted small">Built for students, by students.</p>
+      </div>
+      <div>
+        <h4>Quick links</h4>
+        <nav class="fnav">
+          <a href="/">Home</a>
+          <a href="/items">Items</a>
+          <a href="/about">About</a>
+        </nav>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p class="muted">Email: <a href="mailto:contact@dealx.example">contact@dealx.example</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="muted">© DealX 2025 — Campus Reuse Hub</span>
+    </div>
+  </footer>
+</body>
+</html>
